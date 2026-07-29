@@ -26,6 +26,20 @@ const token =
     ],
     { encoding: "utf8" },
   ).trim();
+const siteBypass =
+  process.env.CHENGGUI_SITES_BYPASS_TOKEN ??
+  execFileSync(
+    "security",
+    [
+      "find-generic-password",
+      "-a",
+      process.env.USER,
+      "-s",
+      "chenggui-daily-library-sites-bypass",
+      "-w",
+    ],
+    { encoding: "utf8" },
+  ).trim();
 
 const report = JSON.parse(await readFile(path.resolve(inputPath), "utf8"));
 const videos = Array.isArray(report) ? report : report.videos;
@@ -40,6 +54,7 @@ for (const item of videos) {
     method: "POST",
     headers: {
       authorization: `Bearer ${token}`,
+      "OAI-Sites-Authorization": `Bearer ${siteBypass}`,
       "content-type": "application/json",
     },
     body: JSON.stringify(video),
@@ -55,6 +70,7 @@ for (const item of videos) {
       method: "PUT",
       headers: {
         authorization: `Bearer ${token}`,
+        "OAI-Sites-Authorization": `Bearer ${siteBypass}`,
         "content-type": video.mediaType ?? "video/mp4",
       },
       body: bytes,
