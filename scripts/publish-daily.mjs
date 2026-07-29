@@ -10,7 +10,8 @@ if (!inputPath) {
 }
 
 const endpoint =
-  process.env.CHENGGUI_SITE_URL ?? "https://chenggui-daily-library.openai.site";
+  process.env.CHENGGUI_SITE_URL ??
+  "https://chenggui-daily-library.jianghongliang0816.chatgpt.site";
 const token =
   process.env.CHENGGUI_INGEST_TOKEN ??
   execFileSync(

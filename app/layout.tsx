@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    "https://chenggui-daily-library.jianghongliang0816.chatgpt.site",
+  ),
   title: "乘归每日选题库",
   description: "乘归账号的私有抖音热点视频、爆点拆解与口播稿资料库。",
   icons: {
