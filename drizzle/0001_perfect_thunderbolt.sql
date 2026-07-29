@@ -1,0 +1,1 @@
+ALTER TABLE `videos` ADD `cover_path` text;

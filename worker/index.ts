@@ -34,6 +34,7 @@ async function ensureSchema(db: D1Database) {
       author TEXT NOT NULL,
       source_url TEXT NOT NULL,
       media_key TEXT,
+      cover_path TEXT,
       category TEXT NOT NULL,
       accent TEXT NOT NULL,
       likes INTEGER NOT NULL DEFAULT 0,
@@ -54,19 +55,25 @@ async function ensureSchema(db: D1Database) {
 }
 
 async function seedDatabase(db: D1Database) {
-  const count = await db.prepare("SELECT COUNT(*) AS count FROM videos").first<{ count: number }>();
-  if ((count?.count ?? 0) > 0) return;
   const now = new Date().toISOString();
   await db.batch(
     seedVideos.map((video) =>
-      db.prepare(`INSERT OR IGNORE INTO videos (
-        id, rank, date, title, poster_text, author, source_url, media_key, category, accent,
+      db.prepare(`INSERT INTO videos (
+        id, rank, date, title, poster_text, author, source_url, media_key, cover_path, category, accent,
         likes, comments, favorites, shares, viral_line, comment_quote, why_it_works,
         insight, script, status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+        rank=excluded.rank, date=excluded.date, title=excluded.title, poster_text=excluded.poster_text,
+        author=excluded.author, source_url=excluded.source_url, cover_path=excluded.cover_path,
+        category=excluded.category, accent=excluded.accent, likes=excluded.likes,
+        comments=excluded.comments, favorites=excluded.favorites, shares=excluded.shares,
+        viral_line=excluded.viral_line, comment_quote=excluded.comment_quote,
+        why_it_works=excluded.why_it_works, insight=excluded.insight,
+        script=excluded.script, updated_at=excluded.updated_at`)
         .bind(
           video.id, video.rank, video.date, video.title, video.posterText, video.author,
-          video.sourceUrl, video.category, video.accent, video.likes, video.comments,
+          video.sourceUrl, video.coverUrl, video.category, video.accent, video.likes, video.comments,
           video.favorites, video.shares, video.viralLine, video.commentQuote,
           video.whyItWorks, video.insight, video.script, video.status, now, now,
         ),
@@ -84,6 +91,7 @@ function rowToVideo(row: Record<string, unknown>): VideoRecord {
     author: String(row.author),
     sourceUrl: String(row.source_url),
     mediaUrl: row.media_key ? `/media/${row.id}` : null,
+    coverUrl: row.cover_path ? String(row.cover_path) : null,
     category: String(row.category) as VideoRecord["category"],
     accent: String(row.accent),
     likes: Number(row.likes),
@@ -130,20 +138,20 @@ async function apiFetch(request: Request, env: Env) {
     const video = (await request.json()) as VideoRecord;
     const now = new Date().toISOString();
     await env.DB.prepare(`INSERT INTO videos (
-      id, rank, date, title, poster_text, author, source_url, media_key, category, accent,
+      id, rank, date, title, poster_text, author, source_url, media_key, cover_path, category, accent,
       likes, comments, favorites, shares, viral_line, comment_quote, why_it_works,
       insight, script, status, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
       rank=excluded.rank, date=excluded.date, title=excluded.title, poster_text=excluded.poster_text,
-      author=excluded.author, source_url=excluded.source_url, category=excluded.category,
+      author=excluded.author, source_url=excluded.source_url, cover_path=excluded.cover_path, category=excluded.category,
       accent=excluded.accent, likes=excluded.likes, comments=excluded.comments,
       favorites=excluded.favorites, shares=excluded.shares, viral_line=excluded.viral_line,
       comment_quote=excluded.comment_quote, why_it_works=excluded.why_it_works,
       insight=excluded.insight, script=excluded.script, updated_at=excluded.updated_at`)
       .bind(
         video.id, video.rank, video.date, video.title, video.posterText, video.author,
-        video.sourceUrl, video.category, video.accent, video.likes, video.comments,
+        video.sourceUrl, video.coverUrl, video.category, video.accent, video.likes, video.comments,
         video.favorites, video.shares, video.viralLine, video.commentQuote,
         video.whyItWorks, video.insight, video.script, video.status ?? "待拍", now, now,
       ).run();

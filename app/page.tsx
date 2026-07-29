@@ -10,6 +10,10 @@ function compactNumber(value: number) {
   return String(value);
 }
 
+function sourceLabel(video: VideoRecord) {
+  return video.sourceUrl.includes("/search/") ? "搜索补充 · 已互动收藏" : "推荐流推送 · 已互动收藏";
+}
+
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -33,6 +37,18 @@ function VideoPoster({
   video: VideoRecord;
   compact?: boolean;
 }) {
+  if (video.coverUrl) {
+    return (
+      <div className={`video-poster video-poster--image ${compact ? "video-poster--compact" : ""}`}>
+        {/* Screenshots are first-party project assets captured from the selected Douyin post. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={video.coverUrl} alt={`${video.author} 的视频封面`} />
+        <span className="cover-chip">封面预览</span>
+        <span className="poster-author">@{video.author}</span>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`video-poster ${compact ? "video-poster--compact" : ""}`}
@@ -71,7 +87,8 @@ export default function Home() {
     [activeFilter, videos],
   );
 
-  const hero = videos[1] ?? videos[0];
+  const hero = videos.find((video) => video.id === "extra-retire-yangyangmi-20260729") ?? videos[1] ?? videos[0];
+  const todayCount = videos.filter((video) => video.date === "2026-07-29").length;
 
   async function updateStatus(video: VideoRecord, status: VideoStatus) {
     setVideos((current) =>
@@ -112,7 +129,7 @@ export default function Home() {
             <span className="rail-label">内容日期</span>
             <button className="date-item date-item--active" type="button">
               <span>07.29</span>
-              <small>今日 · 6条</small>
+              <small>今日 · {todayCount}条</small>
             </button>
             <button className="date-item" type="button"><span>07.28</span><small>6条</small></button>
             <button className="date-item" type="button"><span>07.27</span><small>6条</small></button>
@@ -120,9 +137,9 @@ export default function Home() {
           </div>
           <div className="rail-block rail-summary">
             <span className="rail-label">今日筛选</span>
-            <strong>92</strong>
-            <small>条推荐流粗刷</small>
-            <div><span>入选率</span><b>6.5%</b></div>
+            <strong>100+</strong>
+            <small>条推荐流与精准补充</small>
+            <div><span>今日入选</span><b>{todayCount}条</b></div>
           </div>
         </aside>
 
@@ -130,9 +147,9 @@ export default function Home() {
           <section className="intro">
             <div>
               <span className="eyebrow">2026年7月29日 · 星期三</span>
-              <h1>今天值得拍的<br /><em>六条内容</em></h1>
+              <h1>今天值得拍的<br /><em>{todayCount}条内容</em></h1>
             </div>
-            <p>从抖音推荐流里筛掉大场面和空洞热闹，只留下能被乘归讲出来、也能被普通人听进去的内容。</p>
+            <p>今日新增 10 条，重点收录入伍当天与退伍当天的真实情感。先看封面，再看爆点，最后直接拿走口播稿。</p>
           </section>
 
           {hero && (
@@ -144,15 +161,15 @@ export default function Home() {
               <div className="hero-copy">
                 <div className="card-topline">
                   <span className="rank-badge">今日首推</span>
-                  <span className="source-label">推荐流推送</span>
+                  <span className="source-label">{sourceLabel(hero)}</span>
                 </div>
                 <h2>{hero.title}</h2>
                 <blockquote>“{hero.viralLine}”</blockquote>
                 <p>{hero.insight}</p>
                 <div className="stats-row">
                   <span>♥ {compactNumber(hero.likes)}</span>
-                  <span>● {compactNumber(hero.comments)}</span>
-                  <span>★ {compactNumber(hero.favorites)}</span>
+                  {hero.comments > 0 && <span>● {compactNumber(hero.comments)}</span>}
+                  {hero.favorites > 0 && <span>★ {compactNumber(hero.favorites)}</span>}
                 </div>
                 <button className="text-link" onClick={() => openVideo(hero)} type="button">查看完整拆解 →</button>
               </div>
@@ -185,7 +202,7 @@ export default function Home() {
                   <button className="card-media" onClick={() => openVideo(video)} type="button">
                     <VideoPoster compact video={video} />
                     <span className="mini-play">▶</span>
-                    {video.mediaUrl ? <span className="media-ready">站内可播</span> : <span className="media-ready media-ready--link">原页播放</span>}
+                    {video.mediaUrl ? <span className="media-ready">站内可播</span> : <span className="media-ready media-ready--link">封面可预览</span>}
                   </button>
                   <div className="video-card-body">
                     <div className="card-topline">
@@ -197,7 +214,7 @@ export default function Home() {
                     <div className="card-footer">
                       <div className="stats-row">
                         <span>♥ {compactNumber(video.likes)}</span>
-                        <span>● {compactNumber(video.comments)}</span>
+                        {video.comments > 0 && <span>● {compactNumber(video.comments)}</span>}
                       </div>
                       <button onClick={() => openVideo(video)} type="button">拆解 →</button>
                     </div>
@@ -221,7 +238,7 @@ export default function Home() {
                   <VideoPoster video={selected} />
                   <a className="external-play" href={selected.sourceUrl} target="_blank" rel="noreferrer">
                     <b>▶</b>
-                    <span>打开抖音播放<small>已保留站内播放器位置，抓取文件后自动切换</small></span>
+                    <span>{selected.sourceUrl.includes("/search/") ? "在抖音精准找回" : "打开抖音原视频"}<small>站内先看封面，点击后进入抖音播放</small></span>
                   </a>
                 </>
               )}
@@ -230,14 +247,14 @@ export default function Home() {
               <div className="detail-header">
                 <div>
                   <span className="category-tag">{selected.category}</span>
-                  <span className="source-label">推荐流 · @{selected.author}</span>
+                  <span className="source-label">{sourceLabel(selected)} · @{selected.author}</span>
                 </div>
                 <h2>{selected.title}</h2>
                 <div className="stats-row">
                   <span>♥ {compactNumber(selected.likes)}</span>
-                  <span>● {compactNumber(selected.comments)}</span>
-                  <span>★ {compactNumber(selected.favorites)}</span>
-                  <span>↗ {compactNumber(selected.shares)}</span>
+                  {selected.comments > 0 && <span>● {compactNumber(selected.comments)}</span>}
+                  {selected.favorites > 0 && <span>★ {compactNumber(selected.favorites)}</span>}
+                  {selected.shares > 0 && <span>↗ {compactNumber(selected.shares)}</span>}
                 </div>
               </div>
 

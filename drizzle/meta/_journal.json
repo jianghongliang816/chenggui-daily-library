@@ -8,6 +8,13 @@
       "when": 1785306650647,
       "tag": "0000_glorious_jigsaw",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1785314453049,
+      "tag": "0001_perfect_thunderbolt",
+      "breakpoints": true
     }
   ]
 }

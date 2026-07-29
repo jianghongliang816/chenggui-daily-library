@@ -9,6 +9,7 @@ export const videos = sqliteTable("videos", {
   author: text("author").notNull(),
   sourceUrl: text("source_url").notNull(),
   mediaKey: text("media_key"),
+  coverPath: text("cover_path"),
   category: text("category").notNull(),
   accent: text("accent").notNull(),
   likes: integer("likes").notNull().default(0),
