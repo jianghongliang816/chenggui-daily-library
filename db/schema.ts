@@ -1,0 +1,26 @@
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+
+export const videos = sqliteTable("videos", {
+  id: text("id").primaryKey(),
+  rank: integer("rank").notNull(),
+  date: text("date").notNull(),
+  title: text("title").notNull(),
+  posterText: text("poster_text").notNull(),
+  author: text("author").notNull(),
+  sourceUrl: text("source_url").notNull(),
+  mediaKey: text("media_key"),
+  category: text("category").notNull(),
+  accent: text("accent").notNull(),
+  likes: integer("likes").notNull().default(0),
+  comments: integer("comments").notNull().default(0),
+  favorites: integer("favorites").notNull().default(0),
+  shares: integer("shares").notNull().default(0),
+  viralLine: text("viral_line").notNull(),
+  commentQuote: text("comment_quote").notNull(),
+  whyItWorks: text("why_it_works").notNull(),
+  insight: text("insight").notNull(),
+  script: text("script").notNull(),
+  status: text("status").notNull().default("待拍"),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});

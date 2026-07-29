@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f1eee6"/>
+  <path d="M0 0h26v630H0z" fill="#697252"/>
+  <path d="M26 0h8v630h-8z" fill="#da6f42"/>
+  <g fill="none" stroke="#11130f" opacity=".15">
+    <path d="M72 92h1056M72 535h1056"/>
+    <path d="M850 92v443"/>
+  </g>
+  <text x="74" y="78" fill="#697252" font-family="Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="5">DAILY FIELD NOTES · 07/29</text>
+  <text x="70" y="210" fill="#11130f" font-family="'PingFang SC','Noto Sans CJK SC',sans-serif" font-size="88" font-weight="900">乘归每日</text>
+  <text x="70" y="310" fill="#11130f" font-family="'PingFang SC','Noto Sans CJK SC',sans-serif" font-size="88" font-weight="900">选题库</text>
+  <rect x="70" y="354" width="560" height="5" fill="#da6f42"/>
+  <text x="72" y="418" fill="#11130f" font-family="'PingFang SC','Noto Sans CJK SC',sans-serif" font-size="28">每天值得拍的，已经替你筛好、拆好、写好。</text>
+  <g transform="translate(895 135)">
+    <rect x="0" y="0" width="165" height="292" rx="8" fill="#11130f"/>
+    <rect x="14" y="14" width="137" height="188" rx="4" fill="#697252"/>
+    <circle cx="82.5" cy="108" r="30" fill="#f1eee6" opacity=".88"/>
+    <path d="m74 91 25 17-25 17z" fill="#da6f42"/>
+    <rect x="14" y="220" width="100" height="8" fill="#f1eee6"/>
+    <rect x="14" y="240" width="137" height="5" fill="#f1eee6" opacity=".5"/>
+    <rect x="14" y="257" width="82" height="5" fill="#f1eee6" opacity=".5"/>
+  </g>
+  <g fill="#da6f42">
+    <circle cx="1080" cy="469" r="28"/>
+    <path d="m1070 454 27 15-27 15z" fill="#f1eee6"/>
+  </g>
+  <text x="882" y="518" fill="#697252" font-family="'PingFang SC','Noto Sans CJK SC',sans-serif" font-size="18" font-weight="700">今日入选 06 条</text>
+</svg>
