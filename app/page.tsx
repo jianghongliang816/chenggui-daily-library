@@ -11,7 +11,19 @@ function compactNumber(value: number) {
 }
 
 function sourceLabel(video: VideoRecord) {
+  if (video.id.startsWith("feed-")) return "推荐流推送 · 已互动收藏";
   return video.sourceUrl.includes("/search/") ? "搜索补充 · 已互动收藏" : "推荐流推送 · 已互动收藏";
+}
+
+function sortNewest(items: VideoRecord[]) {
+  return [...items].sort((a, b) => b.date.localeCompare(a.date) || a.rank - b.rank);
+}
+
+function dateHeading(date: string) {
+  const parsed = new Date(`${date}T12:00:00+08:00`);
+  const weekday = new Intl.DateTimeFormat("zh-CN", { weekday: "long", timeZone: "Asia/Shanghai" }).format(parsed);
+  const [year, month, day] = date.split("-").map(Number);
+  return `${year}年${month}月${day}日 · ${weekday}`;
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -63,7 +75,7 @@ function VideoPoster({
 }
 
 export default function Home() {
-  const [videos, setVideos] = useState<VideoRecord[]>(seedVideos);
+  const [videos, setVideos] = useState<VideoRecord[]>(sortNewest(seedVideos));
   const [activeFilter, setActiveFilter] = useState("全部");
   const [selected, setSelected] = useState<VideoRecord | null>(null);
   const [showScript, setShowScript] = useState(false);
@@ -72,7 +84,7 @@ export default function Home() {
     fetch("/api/feed")
       .then((response) => (response.ok ? response.json() : Promise.reject()))
       .then((payload: { videos?: VideoRecord[] }) => {
-        if (payload.videos?.length) setVideos(payload.videos);
+        if (payload.videos?.length) setVideos(sortNewest(payload.videos));
       })
       .catch(() => {
         // Local preview and a fresh deployment intentionally use the seed issue.
@@ -87,8 +99,10 @@ export default function Home() {
     [activeFilter, videos],
   );
 
-  const hero = videos.find((video) => video.id === "extra-retire-yangyangmi-20260729") ?? videos[1] ?? videos[0];
-  const todayCount = videos.filter((video) => video.date === "2026-07-29").length;
+  const latestDate = videos[0]?.date ?? "2026-08-04";
+  const hero = videos.find((video) => video.id === "feed-20260804-pingfan") ?? videos[0];
+  const todayCount = videos.filter((video) => video.date === latestDate).length;
+  const railDate = latestDate.slice(5).replace("-", ".");
 
   async function updateStatus(video: VideoRecord, status: VideoStatus) {
     setVideos((current) =>
@@ -128,7 +142,7 @@ export default function Home() {
           <div className="rail-block">
             <span className="rail-label">内容日期</span>
             <button className="date-item date-item--active" type="button">
-              <span>07.29</span>
+              <span>{railDate}</span>
               <small>今日 · {todayCount}条</small>
             </button>
             <button className="date-item" type="button"><span>07.28</span><small>6条</small></button>
@@ -146,7 +160,7 @@ export default function Home() {
         <div className="content">
           <section className="intro">
             <div>
-              <span className="eyebrow">2026年7月29日 · 星期三</span>
+              <span className="eyebrow">{dateHeading(latestDate)}</span>
               <h1>今天值得拍的<br /><em>{todayCount}条内容</em></h1>
             </div>
             <p>今日新增 10 条，重点收录入伍当天与退伍当天的真实情感。先看封面，再看爆点，最后直接拿走口播稿。</p>
@@ -238,7 +252,7 @@ export default function Home() {
                   <VideoPoster video={selected} />
                   <a className="external-play" href={selected.sourceUrl} target="_blank" rel="noreferrer">
                     <b>▶</b>
-                    <span>{selected.sourceUrl.includes("/search/") ? "在抖音精准找回" : "打开抖音原视频"}<small>站内先看封面，点击后进入抖音播放</small></span>
+                    <span>{selected.id.startsWith("feed-") ? "在抖音找回推荐视频" : selected.sourceUrl.includes("/search/") ? "在抖音精准找回" : "打开抖音原视频"}<small>站内先看封面，点击后进入抖音播放</small></span>
                   </a>
                 </>
               )}
