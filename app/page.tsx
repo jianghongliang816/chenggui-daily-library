@@ -4,6 +4,12 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { seedVideos, type VideoRecord, type VideoStatus } from "@/data/seed";
 
 const filters = ["全部", "军旅文案", "军旅情感", "个人成长", "军营轻内容"];
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const statusStorageKey = "chenggui-video-statuses";
+
+function assetUrl(url: string) {
+  return url.startsWith("/") ? `${basePath}${url}` : url;
+}
 
 function compactNumber(value: number) {
   if (value >= 10000) return `${(value / 10000).toFixed(value >= 100000 ? 1 : 2)}万`;
@@ -54,7 +60,7 @@ function VideoPoster({
       <div className={`video-poster video-poster--image ${compact ? "video-poster--compact" : ""}`}>
         {/* Screenshots are first-party project assets captured from the selected Douyin post. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={video.coverUrl} alt={`${video.author} 的视频封面`} />
+        <img src={assetUrl(video.coverUrl)} alt={`${video.author} 的视频封面`} />
         <span className="cover-chip">封面预览</span>
         <span className="poster-author">@{video.author}</span>
       </div>
@@ -81,14 +87,16 @@ export default function Home() {
   const [showScript, setShowScript] = useState(false);
 
   useEffect(() => {
-    fetch("/api/feed")
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
-      .then((payload: { videos?: VideoRecord[] }) => {
-        if (payload.videos?.length) setVideos(sortNewest(payload.videos));
-      })
-      .catch(() => {
-        // Local preview and a fresh deployment intentionally use the seed issue.
-      });
+    let timer: number | undefined;
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(statusStorageKey) ?? "{}") as Record<string, VideoStatus>;
+      timer = window.setTimeout(() => {
+        setVideos((current) => current.map((video) => saved[video.id] ? { ...video, status: saved[video.id] } : video));
+      }, 0);
+    } catch {
+      // Invalid or unavailable browser storage falls back to the published issue.
+    }
+    return () => window.clearTimeout(timer);
   }, []);
 
   const filtered = useMemo(
@@ -109,11 +117,12 @@ export default function Home() {
       current.map((item) => (item.id === video.id ? { ...item, status } : item)),
     );
     setSelected((current) => (current?.id === video.id ? { ...current, status } : current));
-    await fetch(`/api/videos/${video.id}/status`, {
-      method: "PATCH",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ status }),
-    }).catch(() => undefined);
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(statusStorageKey) ?? "{}") as Record<string, VideoStatus>;
+      window.localStorage.setItem(statusStorageKey, JSON.stringify({ ...saved, [video.id]: status }));
+    } catch {
+      // The in-page state still updates when browser storage is unavailable.
+    }
   }
 
   function openVideo(video: VideoRecord) {
@@ -246,7 +255,7 @@ export default function Home() {
             <button className="modal-close" onClick={() => setSelected(null)} type="button" aria-label="关闭">×</button>
             <div className="detail-media">
               {selected.mediaUrl ? (
-                <video controls autoPlay playsInline src={selected.mediaUrl} />
+                <video controls autoPlay playsInline src={assetUrl(selected.mediaUrl)} />
               ) : (
                 <>
                   <VideoPoster video={selected} />
