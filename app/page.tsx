@@ -157,7 +157,7 @@ export default function Home() {
 
     <nav className="workflow-nav" aria-label="内容工作流">{stages.map((stage) => <button className={activeStage === stage.value ? "workflow-nav-active" : ""} onClick={() => setActiveStage(stage.value)} type="button" key={stage.value}><span>{stage.label}</span><b>{counts[stage.value] ?? 0}</b></button>)}</nav>
 
-    {showProfile && <section className="profile-panel" aria-label="乘归表达模型"><div className="profile-summary"><h2>乘归表达模型</h2><p>{creatorProfile.accountName} · {creatorProfile.snapshot}</p></div><div className="profile-columns"><div><h3>你的语气</h3><ul>{creatorProfile.voice.map((item) => <li key={item}>{item}</li>)}</ul></div><div><h3>已验证爆款结构</h3><ul>{creatorProfile.provenStructures.map((item) => <li key={item.name}><b>{item.name}</b><span>{item.example} · {item.likes}赞</span></li>)}</ul></div></div></section>}
+    {showProfile && <section className="profile-panel" aria-label="乘归表达模型"><div className="profile-summary"><div><h2>乘归表达模型</h2><strong>{creatorProfile.identity}</strong></div><p>{creatorProfile.accountName} · {creatorProfile.snapshot}</p></div><div className="profile-intent"><p><span>写给谁</span>{creatorProfile.audience}</p><p><span>希望留下什么</span>{creatorProfile.desiredEffect}</p></div><div className="profile-columns"><div><h3>人物底色</h3><ul>{creatorProfile.values.map((item) => <li key={item}>{item}</li>)}</ul></div><div><h3>你的语气</h3><ul>{creatorProfile.voice.map((item) => <li key={item}>{item}</li>)}</ul></div><div><h3>反 AI 腔检查</h3><ul>{creatorProfile.qualityGate.map((item) => <li key={item}>{item}</li>)}</ul><h3 className="profile-subheading">不要出现</h3><p className="avoid-list">{creatorProfile.avoid.join(" · ")}</p></div></div></section>}
 
     <section className="shell">
       <aside className="rail"><section><h2>内容板块</h2>{channels.slice(1).map((channel) => <button className={activeChannel === channel.value ? "rail-channel-active" : ""} onClick={() => setActiveChannel(channel.value)} type="button" key={channel.value}><span>{channel.label}</span><small>{channel.description}</small></button>)}</section><section className="rail-note"><h2>当前阶段</h2><strong>{activeStageInfo.label}</strong><p>{activeStageInfo.hint}</p></section></aside>
@@ -172,6 +172,14 @@ export default function Home() {
           <button className="start-work-button" onClick={requestExtraRun} type="button">{runRequested ? "重新复制指令" : "再刷一轮"}<span>→</span></button>
           <dl><div><dt>粗刷目标</dt><dd>200—500条</dd></div><div><dt>今日入选</dt><dd>10—15条</dd></div><div><dt>预计完成</dt><dd>40—90分钟</dd></div></dl>
         </section>
+
+        {latestDate === "2026-10-06" && <section className="run-report" aria-label="本轮刷流报告">
+          <div><span>本轮刷流开始</span><strong>21:10</strong></div>
+          <div><span>筛选范围</span><strong>抖音推荐流</strong></div>
+          <div><span>粗刷条数</span><strong>约 105 条</strong></div>
+          <div><span>入选条数</span><strong>{seedVideos.filter((video) => video.date === latestDate).length} 条</strong></div>
+          <div className="run-report-pick"><span>最推荐先拍</span><strong>“参军后你失去了什么”</strong></div>
+        </section>}
 
         <header className="intro"><div><p>{latestDate.replaceAll("-", ".")} · 乘归内容总监</p><h1>{activeStageInfo.label}<br /><em>{resultCount}条内容</em></h1></div><p>原内容的爆点保留 70%—80%，你的经历、价值判断和表达保留 20%—30%。只有你确认的选题才会进入待拍摄。</p></header>
 
