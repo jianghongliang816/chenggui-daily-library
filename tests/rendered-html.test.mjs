@@ -19,7 +19,8 @@ test("renders the private daily library shell", async () => {
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /乘归每日选题库/);
-  assert.match(html, /今天值得拍的/);
+  assert.match(html, /每日筛选/);
+  assert.match(html, /个人随身记/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape/);
   assert.ok(root);
 });

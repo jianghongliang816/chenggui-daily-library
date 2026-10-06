@@ -1,4 +1,8 @@
-export type VideoStatus = "待拍" | "已拍" | "放弃";
+export type VideoStatus = "待筛选" | "待拍" | "已拍" | "放弃";
+
+export type ContentChannel = "军旅" | "成长励志" | "热点观点";
+export type DiscoveryType = "推荐流" | "热榜" | "用户投稿" | "搜索找回";
+export type ViralDriver = "文案爆" | "故事爆" | "观点爆" | "画面爆" | "综合" | "待判断";
 
 export type VideoRecord = {
   id: string;
@@ -11,6 +15,12 @@ export type VideoRecord = {
   mediaUrl: string | null;
   coverUrl: string | null;
   category: "军旅文案" | "军旅情感" | "个人成长" | "军营轻内容";
+  channel?: ContentChannel;
+  discoveryType?: DiscoveryType;
+  sourceVerified?: boolean;
+  viralDriver?: ViralDriver;
+  hotCommentLikes?: number;
+  trendTopic?: string;
   accent: string;
   likes: number;
   comments: number;
