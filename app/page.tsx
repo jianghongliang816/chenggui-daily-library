@@ -165,7 +165,7 @@ export default function Home() {
       <div className="content">
         <section className="start-work-card">
           <div>
-            <span className="work-state">{runRequested ? "追加任务已准备" : "每天 09:30 自动工作"}</span>
+            <span className="work-state">{runRequested ? "追加任务已准备" : "每天 12:00 自动工作"}</span>
             <h2>{runRequested ? "“再刷一轮”指令已复制" : "今日选题将自动送达"}</h2>
             <p>{runRequested ? "回到 Codex 粘贴指令，我就会继续刷流并补充新内容。安全的网站直连仍需本机任务桥接。" : "系统会自动刷抖音推荐流200—500条，筛出10—15条真正适合你的内容。如果今天的结果不够满意，再追加一轮。"}</p>
           </div>
@@ -173,12 +173,12 @@ export default function Home() {
           <dl><div><dt>粗刷目标</dt><dd>200—500条</dd></div><div><dt>今日入选</dt><dd>10—15条</dd></div><div><dt>预计完成</dt><dd>40—90分钟</dd></div></dl>
         </section>
 
-        {latestDate === "2026-10-06" && <section className="run-report" aria-label="本轮刷流报告">
-          <div><span>本轮刷流开始</span><strong>21:10</strong></div>
+    {latestDate === "2026-10-09" && <section className="run-report" aria-label="本轮刷流报告">
+          <div><span>本轮刷流开始</span><strong>12:00</strong></div>
           <div><span>筛选范围</span><strong>抖音推荐流</strong></div>
-          <div><span>粗刷条数</span><strong>约 105 条</strong></div>
+          <div><span>粗刷条数</span><strong>约 285 条</strong></div>
           <div><span>入选条数</span><strong>{seedVideos.filter((video) => video.date === latestDate).length} 条</strong></div>
-          <div className="run-report-pick"><span>最推荐先拍</span><strong>“参军后你失去了什么”</strong></div>
+          <div className="run-report-pick"><span>最推荐先拍</span><strong>“车门关上，和迷彩青春告别”</strong></div>
         </section>}
 
         <header className="intro"><div><p>{latestDate.replaceAll("-", ".")} · 乘归内容总监</p><h1>{activeStageInfo.label}<br /><em>{resultCount}条内容</em></h1></div><p>原内容的爆点保留 70%—80%，你的经历、价值判断和表达保留 20%—30%。只有你确认的选题才会进入待拍摄。</p></header>
