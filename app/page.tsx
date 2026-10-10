@@ -173,12 +173,12 @@ export default function Home() {
           <dl><div><dt>粗刷目标</dt><dd>200—500条</dd></div><div><dt>今日入选</dt><dd>10—15条</dd></div><div><dt>预计完成</dt><dd>40—90分钟</dd></div></dl>
         </section>
 
-    {latestDate === "2026-10-09" && <section className="run-report" aria-label="本轮刷流报告">
+    {latestDate === "2026-10-10" && <section className="run-report" aria-label="本轮刷流报告">
           <div><span>本轮刷流开始</span><strong>12:00</strong></div>
           <div><span>筛选范围</span><strong>抖音推荐流</strong></div>
-          <div><span>粗刷条数</span><strong>约 285 条</strong></div>
+          <div><span>粗刷条数</span><strong>约 290 条</strong></div>
           <div><span>入选条数</span><strong>{seedVideos.filter((video) => video.date === latestDate).length} 条</strong></div>
-          <div className="run-report-pick"><span>最推荐先拍</span><strong>“车门关上，和迷彩青春告别”</strong></div>
+          <div className="run-report-pick"><span>最推荐先拍</span><strong>“没有靠山，就自己长成山”</strong></div>
         </section>}
 
         <header className="intro"><div><p>{latestDate.replaceAll("-", ".")} · 乘归内容总监</p><h1>{activeStageInfo.label}<br /><em>{resultCount}条内容</em></h1></div><p>原内容的爆点保留 70%—80%，你的经历、价值判断和表达保留 20%—30%。只有你确认的选题才会进入待拍摄。</p></header>
